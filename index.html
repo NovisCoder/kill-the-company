@@ -511,12 +511,34 @@ html,body{
 #cs-hud{
   bottom:calc(58px + var(--safe-bottom)) !important;
 }
-#p2-grid{
-  padding-bottom:calc(96px + var(--safe-bottom)) !important;
+#p2-scroll{
+  position:absolute;
+  inset:0;
+  padding:10px 12px calc(28px + var(--safe-bottom));
+  overflow-y:auto;
   -webkit-overflow-scrolling:touch;
+  z-index:4;
+}
+#p2-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  align-content:start;
 }
 #p2-grid > div{
   min-height:auto !important;
+}
+#p2-guide{
+  margin:18px 4px calc(28px + var(--safe-bottom));
+  font-size:15px;
+  color:rgba(210,210,210,.85);
+  text-align:center;
+  line-height:2;
+  letter-spacing:.03em;
+  text-shadow:0 1px 8px rgba(0,0,0,.7);
+  white-space:pre-line;
+  animation:hintBlink 2.5s ease-in-out infinite;
+  pointer-events:none;
 }
 .ch-btn,
 .btn,
@@ -541,6 +563,7 @@ input[type=text]{
   .intro-bottom{gap:10px;padding-left:20px;padding-right:20px}
   #p2-grid{grid-template-columns:1fr !important;gap:7px !important}
   #p2-grid > div{padding:9px !important;gap:4px !important}
+  #p2-guide{font-size:13px;line-height:1.75;margin-top:14px}
 }
 
 @media (max-height:620px){
@@ -837,11 +860,10 @@ input[type=text]{
   <!-- 배경 + 클루 카드 그리드 -->
   <div style="position:relative;width:100%;flex:1;overflow:hidden">
     <img src="images/room_p2.jpg" style="width:100%;height:100%;object-fit:cover;object-position:center;display:block;opacity:.35">
-    <!-- 과제 카드 그리드 -->
-    <div id="p2-grid" style="position:absolute;inset:0;padding:10px 12px;overflow-y:auto;display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start"></div>
-    <!-- 하단 안내 텍스트 -->
-    <div style="position:absolute;bottom:0;left:0;right:0;top:60%;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:5">
-      <div style="font-size:15px;color:rgba(210,210,210,.85);text-align:center;line-height:2;letter-spacing:.03em;text-shadow:0 1px 8px rgba(0,0,0,.7);white-space:pre-line;animation:hintBlink 2.5s ease-in-out infinite">꿈속에서 찾았던 8개의 클루입니다.
+    <!-- 과제 카드 + 안내문을 같은 스크롤 영역 안에 배치 -->
+    <div id="p2-scroll">
+      <div id="p2-grid"></div>
+      <div id="p2-guide">꿈속에서 찾았던 8개의 클루입니다.
 각각의 클루를 선택해 일루셔니스트 대표로서
 올바른 의사결정을 선택하세요.</div>
     </div>
