@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover,interactive-widget=overlays-content">
 <title>Kill The Company</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -417,6 +417,141 @@ input[type=text]::placeholder{color:rgba(255,255,255,.3)}
 #cs-end h2{font-size:20px;letter-spacing:0.2em;color:#4af;text-shadow:0 0 20px #4af}
 #cs-end p{font-size:12px;color:rgba(255,255,255,0.45);letter-spacing:0.1em}
 
+
+/* ─────────────────────────────────────────────
+   iOS Display Zoom / Larger Text / Safe Area 대응 패치
+   - 100vh 대신 실제 보이는 높이(--app-height)를 사용
+   - 하단 버튼과 팝업은 홈 인디케이터 영역을 피함
+   - 작은 높이/확대 표시 상태에서는 콘텐츠를 스크롤 가능하게 조정
+───────────────────────────────────────────── */
+:root{
+  --app-height:100dvh;
+  --safe-top:env(safe-area-inset-top,0px);
+  --safe-right:env(safe-area-inset-right,0px);
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+  --safe-left:env(safe-area-inset-left,0px);
+}
+html,body{
+  height:var(--app-height) !important;
+  min-height:var(--app-height) !important;
+  overscroll-behavior:none;
+  -webkit-text-size-adjust:100%;
+  text-size-adjust:100%;
+}
+#app{
+  height:var(--app-height) !important;
+  min-height:var(--app-height) !important;
+  max-height:var(--app-height) !important;
+  padding-left:var(--safe-left);
+  padding-right:var(--safe-right);
+}
+.scr{
+  min-height:0;
+  height:100%;
+}
+.hud{
+  padding-top:calc(10px + var(--safe-top));
+}
+.room{
+  min-height:0;
+}
+.hint-bar{
+  padding-bottom:calc(6px + var(--safe-bottom));
+}
+#meet-wrap,
+#meet-wrap-r1{
+  bottom:calc(12px + var(--safe-bottom)) !important;
+  left:calc(16px + var(--safe-left)) !important;
+  right:calc(16px + var(--safe-right)) !important;
+}
+.ov,
+#ov-submit{
+  padding:12px !important;
+  padding-left:calc(12px + var(--safe-left)) !important;
+  padding-right:calc(12px + var(--safe-right)) !important;
+  padding-bottom:calc(12px + var(--safe-bottom)) !important;
+  align-items:flex-end !important;
+}
+.pop{
+  max-height:calc(var(--app-height) - var(--safe-top) - var(--safe-bottom) - 32px) !important;
+  overflow-y:auto !important;
+  -webkit-overflow-scrolling:touch;
+}
+.submit-bar{
+  bottom:0 !important;
+  padding-bottom:calc(12px + var(--safe-bottom)) !important;
+}
+.intro-bottom{
+  bottom:0 !important;
+  padding-bottom:calc(24px + var(--safe-bottom)) !important;
+}
+.boss-content{
+  padding-bottom:calc(28px + var(--safe-bottom)) !important;
+  -webkit-overflow-scrolling:touch;
+}
+.cat-dialog-overlay{
+  padding-bottom:calc(28px + var(--safe-bottom)) !important;
+}
+#awake-tap,
+.tap-hint{
+  font-size:clamp(14px,4.8vw,24px) !important;
+}
+.result-wrap{
+  height:100% !important;
+  padding-top:calc(24px + var(--safe-top)) !important;
+  padding-bottom:calc(28px + var(--safe-bottom)) !important;
+  -webkit-overflow-scrolling:touch;
+}
+.r-btns{
+  padding-bottom:calc(20px + var(--safe-bottom)) !important;
+}
+#cs-skip-wrap{
+  bottom:calc(24px + var(--safe-bottom)) !important;
+}
+#cs-hud{
+  bottom:calc(58px + var(--safe-bottom)) !important;
+}
+#p2-grid{
+  padding-bottom:calc(96px + var(--safe-bottom)) !important;
+  -webkit-overflow-scrolling:touch;
+}
+#p2-grid > div{
+  min-height:auto !important;
+}
+.ch-btn,
+.btn,
+.btn-mission,
+input[type=text]{
+  min-height:44px;
+}
+
+@media (max-height:740px), (max-width:390px){
+  .hud{padding-left:12px;padding-right:12px;gap:8px}
+  .hud-title{font-size:10px}
+  .badge{font-size:12px;padding:4px 10px}
+  .move-btn{font-size:11px;padding:7px 12px}
+  .hint-bar{font-size:12px;line-height:1.35;padding-top:6px}
+  .pop{padding:14px}
+  .pop-tag{font-size:13px;letter-spacing:.08em}
+  .pop-body{font-size:12px;line-height:1.6}
+  .ch-btn{font-size:12px;line-height:1.45;padding:12px}
+  .intro-center-logo{top:38%;padding:16px 24px 18px}
+  .intro-logo-kill{font-size:clamp(42px,14vw,58px);letter-spacing:5px}
+  .intro-logo-sub{font-size:clamp(14px,5vw,18px);letter-spacing:5px}
+  .intro-bottom{gap:10px;padding-left:20px;padding-right:20px}
+  #p2-grid{grid-template-columns:1fr !important;gap:7px !important}
+  #p2-grid > div{padding:9px !important;gap:4px !important}
+}
+
+@media (max-height:620px){
+  .cin{justify-content:flex-start !important;overflow-y:auto !important;padding-top:calc(24px + var(--safe-top)) !important;padding-bottom:calc(24px + var(--safe-bottom)) !important;-webkit-overflow-scrolling:touch}
+  .cl{line-height:1.8}
+  .dlg{padding:12px 14px;margin:8px 0}
+  .boss-content{justify-content:flex-end !important}
+  .grade{font-size:64px}
+  .grade-result-img{max-height:160px}
+}
+
 </style>
 </head>
 <body>
@@ -780,6 +915,24 @@ input[type=text]::placeholder{color:rgba(255,255,255,.3)}
 <script src="data.js"></script>
 <script src="game.js"></script>
 <script src="admin.js"></script>
+
+<script>
+// iOS Safari/Display Zoom에서 100vh가 실제 보이는 높이와 달라지는 문제 보정
+(function(){
+  function setAppHeight(){
+    var h = (window.visualViewport && window.visualViewport.height) ? window.visualViewport.height : window.innerHeight;
+    if(h) document.documentElement.style.setProperty('--app-height', h + 'px');
+  }
+  setAppHeight();
+  window.addEventListener('resize', setAppHeight);
+  window.addEventListener('orientationchange', function(){ setTimeout(setAppHeight, 250); });
+  window.addEventListener('pageshow', setAppHeight);
+  if(window.visualViewport){
+    window.visualViewport.addEventListener('resize', setAppHeight);
+    window.visualViewport.addEventListener('scroll', setAppHeight);
+  }
+})();
+</script>
 <script>
 // ── 컷씬 엔진 (영상 기반) ──
 
