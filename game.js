@@ -289,7 +289,7 @@ function collect(room){
       toastMsg.style.fontSize = 'clamp(14px,5vw,24px)';
       toastMsg.textContent = msg;
       toast.style.display = 'flex';
-      setTimeout(function(){ toast.style.display = 'none'; }, 500);
+      setTimeout(function(){ toast.style.display = 'none'; }, 900);
     }
   }
 }
