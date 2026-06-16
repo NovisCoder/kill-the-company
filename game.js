@@ -195,6 +195,12 @@ function stopMovePulse(){
 function showNavTooltip(){
   var tip = document.getElementById('nav-tooltip');
   if(!tip) return;
+  // HUD 실제 높이를 측정해 CSS 변수로 설정 → safe-area/디스플레이 줌 무관하게 HUD 바로 아래 표시
+  var hud = document.querySelector('#s-r1 .hud');
+  if(hud){
+    var hudH = hud.getBoundingClientRect().height;
+    tip.style.setProperty('--hud-h', hudH + 'px');
+  }
   tip.style.display = 'block';
   tip.classList.remove('hiding');
   // 3.5초 후 페이드아웃
