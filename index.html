@@ -120,7 +120,7 @@ input[type=text]::placeholder{color:rgba(255,255,255,.3)}
 }
 
 /* 팝업 */
-.ov{position:absolute;inset:0;background:rgba(0,0,0,.78);display:flex;align-items:flex-end;padding:12px;z-index:50}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.92);display:flex;align-items:flex-end;padding:12px;z-index:50}
 .pop{width:100%;background:#141420;border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:18px;max-height:78vh;overflow-y:auto}
 .pop-tag{
   font-size:15px;                     /* 원하는 큰 크기로 변경 */
@@ -204,7 +204,7 @@ input[type=text]::placeholder{color:rgba(255,255,255,.3)}
   bottom:calc(16px + var(--safe-bottom, 0px));
   left:50%;
   transform:translateX(-50%);
-  z-index:500;
+  z-index:15;
   background:#E8192C;
   color:#fff;
   border:none;
@@ -268,7 +268,7 @@ input[type=text]::placeholder{color:rgba(255,255,255,.3)}
   bottom:calc(16px + var(--safe-bottom, 0px));
   left:50%;
   transform:translateX(-50%);
-  z-index:500;
+  z-index:15;
   background:rgba(20,20,40,0.92);
   color:#fff;
   border:1px solid rgba(255,255,255,.25);
@@ -360,7 +360,7 @@ input[type=text]::placeholder{color:rgba(255,255,255,.3)}
 .wrong-toast{
   position:fixed;top:0;left:0;right:0;bottom:0;
   display:flex;align-items:center;justify-content:center;
-  background:rgba(0,0,0,.72);
+  background:rgba(0,0,0,.92);
   z-index:200;
   animation:toastIn .25s ease;
   pointer-events:none;
@@ -630,7 +630,10 @@ html,body{
   padding-bottom:calc(20px + var(--safe-bottom)) !important;
 }
 #cs-skip-wrap{
-  bottom:calc(24px + var(--safe-bottom)) !important;
+  top:50% !important;
+  left:50% !important;
+  transform:translate(-50%,-50%) !important;
+  bottom:auto !important;
 }
 #cs-hud{
   bottom:calc(58px + var(--safe-bottom)) !important;
@@ -670,6 +673,38 @@ html,body{
 input[type=text]{
   min-height:44px;
 }
+
+@media (max-height:667px){
+  .hud{padding-top:calc(6px + var(--safe-top));padding-bottom:6px}
+  .hud-title{font-size:9px}
+  .badge{font-size:11px;padding:3px 8px}
+  .move-btn{font-size:10px;padding:6px 10px}
+  .pop{padding:12px}
+  .ch-btn{font-size:11px;padding:10px 12px}
+  .intro-center-logo{top:35%;padding:12px 20px 14px}
+  .intro-logo-kill{font-size:clamp(36px,12vw,52px);letter-spacing:4px}
+  .intro-logo-sub{font-size:clamp(12px,4.5vw,16px);letter-spacing:4px}
+  .cin{padding:24px 20px}
+  .cl{font-size:clamp(11px,3.2vw,13px);line-height:1.9}
+  .dlg{padding:10px 12px;margin:6px 0}
+  .dlg-tx{font-size:clamp(11px,3vw,13px)}
+}
+
+/* clamp 반응형 텍스트 */
+.cl{font-size:clamp(12px,3.5vw,14px)}
+.cl.em{font-size:clamp(13px,3.8vw,15px)}
+.pop-body{font-size:clamp(11px,3vw,13px)}
+.pop-title{font-size:clamp(12px,3.2vw,14px)}
+.ch-btn{font-size:clamp(12px,3.2vw,14px)}
+.dlg-tx{font-size:clamp(11px,3vw,13px)}
+.hud-title{font-size:clamp(9px,2.5vw,11px)}
+
+/* 스크롤 막힌 구간 해제 */
+.cin{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.boss-content{overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* 더블탭 확대 방지 */
+*{touch-action:manipulation}
 
 @media (max-height:740px), (max-width:390px){
   .hud{padding-left:12px;padding-right:12px;gap:8px}
@@ -744,8 +779,8 @@ input[type=text]{
     <div class="cl red" id="bc3">당신은 경쟁사 2위 게임사 데빌 게임즈가 심어 놓은</div>
     <div class="cl red" id="bc4">산업 스파이다.</div>
     <div style="height:16px"></div>
-    <div class="cl" id="bc5">지령: 일루셔니스트 게임즈의 혁신을 방해할</div>
-    <div class="cl" id="bc6">결정적 단서 6개를 확보하라.</div>
+    <div class="cl" id="bc5" style="font-size:clamp(15px,4.5vw,18px);font-weight:700;color:#fff">지령: 일루셔니스트 게임즈의 혁신을 방해할</div>
+    <div class="cl" id="bc6" style="font-size:clamp(15px,4.5vw,18px);font-weight:700;color:#fff">결정적 단서 6개를 확보하라.</div>
     <div style="height:24px"></div>
     <button class="btn btn-red" id="brief-go" style="display:none;max-width:260px" onclick="gotoR1()">임무 개시 →</button>
   </div>
@@ -814,7 +849,7 @@ input[type=text]{
     </svg>
 
   </div>
-  <div id="meet-wrap-r1" style="display:none;position:absolute;bottom:14px;left:16px;right:16px;z-index:25">
+  <div id="meet-wrap-r1" style="display:none;position:absolute;bottom:0;left:0;right:0;z-index:25;padding:20px 16px 16px;background:linear-gradient(transparent,rgba(0,0,0,.95) 40%)">
     <button class="btn btn-green" onclick="gotoBoss()">모든 단서 수집 완료 — 빅보스를 만나러 간다 →</button>
   </div>
   <div class="ov" id="ov1" style="display:none">
@@ -898,7 +933,7 @@ input[type=text]{
       </div>
     </div>
   </div>
-  <div id="meet-wrap" style="display:none;position:absolute;bottom:12px;left:16px;right:16px;z-index:20">
+  <div id="meet-wrap" style="display:none;position:absolute;bottom:0;left:0;right:0;z-index:20;padding:20px 16px 16px;background:linear-gradient(transparent,rgba(0,0,0,.95) 40%)">
     <button class="btn btn-green" onclick="gotoBoss()">모든 단서 수집 완료 — 빅보스를 만나러 간다 →</button>
   </div>
 </div>
@@ -990,7 +1025,7 @@ input[type=text]{
   </video>
 
   <!-- 영상 재생 완료 후에만 표시되는 Skip 버튼 -->
-  <div id="cs-skip-wrap" style="display:none;position:absolute;bottom:40px;left:0;right:0;display:none;align-items:center;justify-content:center">
+  <div id="cs-skip-wrap" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:none;align-items:center;justify-content:center">
     <button id="cs-skip-btn" onclick="csSkip()"
       style="padding:14px 40px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.5);border-radius:8px;color:#fff;font-size:15px;font-weight:700;letter-spacing:.1em;cursor:pointer">
       결과 보기 →

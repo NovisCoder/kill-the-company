@@ -298,11 +298,13 @@ var BOSS = [
   {t:'line', tx:'어두운 주차장. 검은 차 안.'},
   {t:'line', tx:'데빌 게임즈 빅보스가 기다리고 있다.'},
   {t:'line', tx:'클루 6개를 모두 전달했다.'},
+  {t:'clear'},
   {t:'dlg',  sp:'빅보스 (데빌 게임즈)', tx:'수고했어. 역시 소문대로군. 믿을 만해.'},
   {t:'sp'},
   {t:'switch-gun'},
   {t:'dlg',  sp:'빅보스 (데빌 게임즈)', tx:'그런데… 아쉽지만 미안.', red:true},
   {t:'dlg',  sp:'빅보스 (데빌 게임즈)', tx:'증인을 남겨둘 수 없거든.', red:true},
+  {t:'clear'},
   {t:'line', tx:'"약속과 다르잖아! 살려줘!"', red:true},
   {t:'line', tx:'으아아아아아아악!!!', red:true},
   {t:'line', tx:'소리를 지르며 눈을 가린다', red:true},
@@ -330,7 +332,12 @@ function addBossStep(){
   if(step.t === 'next'){ startAwake(); return; }
   var el = document.getElementById('boss-lines');
  
-  if(step.t === 'switch-gun'){
+  if(step.t === 'clear'){
+    el.innerHTML = '';
+    G.bossStep++;
+    addBossStep();
+    return;
+  } else if(step.t === 'switch-gun'){
     var meet = document.getElementById('boss-img-meet');
     var gun  = document.getElementById('boss-img-gun');
     if(meet) meet.style.opacity = '0';
