@@ -286,6 +286,7 @@ function collect(room){
     var toastMsg = document.getElementById('wrong-toast-msg');
     if(toast && toastMsg){
       toastMsg.style.whiteSpace = 'pre-line';
+      toastMsg.style.fontSize = 'clamp(14px,5vw,24px)';
       toastMsg.textContent = msg;
       toast.style.display = 'flex';
       setTimeout(function(){ toast.style.display = 'none'; }, 500);

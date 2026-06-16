@@ -78,8 +78,8 @@ input[type=text]::placeholder{color:rgba(255,255,255,.3)}
 @keyframes hintBlink{0%,100%{opacity:.5}50%{opacity:1}}
 
 /* 방 */
-.room{position:relative;width:100%;flex:1;overflow:hidden;background:#111}
-.room img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+.room{position:relative;width:100%;flex:1;overflow:hidden;background:#111;aspect-ratio:4/3}
+.room img{width:100%;height:100%;object-fit:contain;object-position:center;display:block}
 
 /* 핫스팟 */
 .hs{position:absolute;cursor:pointer;border-radius:0;display:flex;align-items:center;justify-content:center}
@@ -177,12 +177,12 @@ input[type=text]::placeholder{color:rgba(255,255,255,.3)}
 
 /* 결과 */
 .result-wrap{width:100%;display:flex;flex-direction:column;align-items:center;padding:32px 20px;gap:4px;overflow-y:auto;height:100%}
-.grade{font-size:80px;font-weight:900;line-height:1}
-.score-txt{font-size:16px;color:rgba(255,255,255,.5);margin-top:6px}
-.r-title{font-size:17px;font-weight:700;color:#fff;margin-top:18px;text-align:center;line-height:1.4}
-.r-body{font-size:13px;color:rgba(255,255,255,.6);text-align:center;line-height:1.75;margin-top:10px;padding:0 4px}
+.grade{font-size:clamp(52px,18vw,80px);font-weight:900;line-height:1}
+.score-txt{font-size:clamp(12px,3.5vw,16px);color:rgba(255,255,255,.5);margin-top:6px}
+.r-title{font-size:clamp(13px,4vw,17px);font-weight:700;color:#fff;margin-top:18px;text-align:center;line-height:1.4}
+.r-body{font-size:clamp(11px,3vw,13px);color:rgba(255,255,255,.6);text-align:center;line-height:1.75;margin-top:10px;padding:0 4px}
 .r-extra{margin-top:14px;padding:12px;background:rgba(232,25,44,.1);border:1px solid rgba(232,25,44,.25);border-radius:6px;font-size:12px;color:#ff8080;line-height:1.65;text-align:center}
-.grade-result-img{width:min(78%,300px);max-height:220px;object-fit:contain;display:block;margin:18px auto 4px;filter:drop-shadow(0 8px 18px rgba(0,0,0,.45))}
+.grade-result-img{width:min(78%,300px);max-height:clamp(140px,28vw,220px);object-fit:contain;display:block;margin:18px auto 4px;filter:drop-shadow(0 8px 18px rgba(0,0,0,.45))}
 .r-btns{width:100%;display:flex;flex-direction:column;gap:8px;margin-top:20px;padding-bottom:28px}
 
 /* 이동 버튼 */
@@ -250,7 +250,7 @@ input[type=text]::placeholder{color:rgba(255,255,255,.3)}
   font-size:11px;color:#E8192C;letter-spacing:.25em;margin-bottom:18px;
 }
 #how-to-play-box .htp-text{
-  font-size:18px;font-weight:700;color:#fff;line-height:2.1;
+  font-size:18px;font-weight:700;color:#fff;line-height:2.1;white-space:nowrap;
 }
 #how-to-play-box .htp-close-hint{
   margin-top:22px;font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.08em;
@@ -310,7 +310,7 @@ input[type=text]::placeholder{color:rgba(255,255,255,.3)}
   font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.25em;margin-bottom:18px;
 }
 #how-to-play-box-p2 .htp-text{
-  font-size:18px;font-weight:700;color:#fff;line-height:2.1;
+  font-size:18px;font-weight:700;color:#fff;line-height:2.1;white-space:nowrap;
 }
 #how-to-play-box-p2 .htp-close-hint{
   margin-top:22px;font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.08em;
@@ -367,13 +367,14 @@ input[type=text]::placeholder{color:rgba(255,255,255,.3)}
 }
 @keyframes toastIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
 .wrong-toast-text{
-  font-size:24px;font-weight:900;color:#fff;
+  font-size:clamp(14px,5vw,24px);font-weight:900;color:#fff;
   text-align:center;line-height:1.5;
   padding:28px 32px;
   border:3px solid rgba(255,255,255,.4);
   border-radius:16px;
   background:rgba(20,20,40,.9);
-  max-width:80%;
+  max-width:90%;
+  white-space:pre-line;
   text-shadow:0 2px 12px rgba(0,0,0,.8);
 }
 
@@ -781,6 +782,7 @@ input[type=text]{
     <div style="height:16px"></div>
     <div class="cl" id="bc5" style="font-size:clamp(15px,4.5vw,18px);font-weight:700">지령:일루셔니스트 게임즈의 혁신을 방해할</div>
     <div class="cl" id="bc6" style="font-size:clamp(15px,4.5vw,18px);font-weight:700">결정적 단서 6개를 확보하라</div>
+
     <div style="height:24px"></div>
     <button class="btn btn-red" id="brief-go" style="display:none;max-width:260px" onclick="gotoR1()">임무 개시 →</button>
   </div>
@@ -1002,14 +1004,14 @@ input[type=text]{
 
 <!-- 2페이즈 플레이 방법 오버레이 -->
 <div id="how-to-play-overlay-p2" onclick="closeHowToPlayP2()">
-  <div id="how-to-play-box-p2" onclick="event.stopPropagation()">
+  <div id="how-to-play-box-p2">
     <button id="how-to-play-close-p2" onclick="closeHowToPlayP2()">✕</button>
     <div class="htp-label">HOW TO PLAY</div>
     <div class="htp-text">
-      꿈속에서 스파이가 되어 찾았냈던
-      일루셔니스트의 6가지 문제점 입니다.<br>
-      이제는 대표로서 어떻게 해결하면 좋을지<br>
-      가장 혁신적인 판단을 내려보세요.<br>
+      <div>꿈속에서 찾았던 6개의 클루입니다.</div>
+      <div>각각의 클루를 선택해</div>
+      <div>일루셔니스트 대표로서</div>
+      <div>올바른 의사결정을 선택하세요.</div>
     </div>
     <div class="htp-close-hint">화면을 클릭하면 닫힙니다</div>
   </div>
@@ -1021,7 +1023,7 @@ input[type=text]{
     src="images/cutscene.mp4"
     playsinline
     preload="auto"
-    style="width:100%;height:100%;object-fit:cover;display:block">
+    style="width:100%;height:100%;object-fit:contain;display:block">
   </video>
 
   <!-- 영상 재생 완료 후에만 표시되는 Skip 버튼 -->
@@ -1070,14 +1072,15 @@ input[type=text]{
 
 <!-- 플레이 방법 오버레이 배너 -->
 <div id="how-to-play-overlay" onclick="closeHowToPlay()">
-  <div id="how-to-play-box" onclick="event.stopPropagation()">
+  <div id="how-to-play-box">
     <button id="how-to-play-close" onclick="closeHowToPlay()">✕</button>
     <div class="htp-label">HOW TO PLAY</div>
     <div class="htp-text">
-      당신은 경쟁사 데빌 게임즈에서 고용한<br>
-      산업스파이입니다.<br>
-      일루셔니스트 게임즈에게 불리해 보이는<br>
-      클루를 수집해 빅보스를 찾아가세요.
+      <div>당신은 경쟁사 데빌 게임즈에서</div>
+      <div>고용한 산업스파이입니다.</div>
+      <div>일루셔니스트 게임즈에게</div>
+      <div>불리해 보이는 클루 6개를</div>
+      <div>수집해 빅보스를 찾아가세요.</div>
     </div>
     <div class="htp-close-hint">화면을 클릭하면 닫힙니다</div>
   </div>
