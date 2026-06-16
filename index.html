@@ -310,7 +310,10 @@ input[type=text]::placeholder{color:rgba(255,255,255,.3)}
   font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.25em;margin-bottom:18px;
 }
 #how-to-play-box-p2 .htp-text{
-  font-size:18px;font-weight:700;color:#fff;line-height:2.1;white-space:nowrap;
+  font-size:clamp(14px,4.2vw,17px);font-weight:700;color:#fff;line-height:1.9;white-space:normal;
+}
+#how-to-play-box-p2 .htp-sub{
+  margin-top:12px;font-size:clamp(11px,3vw,13px);color:rgba(255,255,255,.55);font-weight:400;line-height:1.5;letter-spacing:.02em;
 }
 #how-to-play-box-p2 .htp-close-hint{
   margin-top:22px;font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.08em;
@@ -1008,11 +1011,12 @@ input[type=text]{
     <button id="how-to-play-close-p2" onclick="closeHowToPlayP2()">✕</button>
     <div class="htp-label">HOW TO PLAY</div>
     <div class="htp-text">
-      <div>꿈속에서 찾았던 6개의 클루입니다.</div>
-      <div>각각의 클루를 선택해</div>
-      <div>일루셔니스트 대표로서</div>
-      <div>올바른 의사결정을 선택하세요.</div>
+      <div>꿈속에서 스파이가 되어 찾았던</div>
+      <div>일루셔니스트 혁신을 막는 6가지 문제입니다.</div>
+      <div>이제 일루셔니스트 대표가 되어</div>
+      <div>혁신을 위한 올바른 결정을 해주세요.</div>
     </div>
+    <div class="htp-sub">"선택에 따라 일루셔니스트의 미래가 결정됩니다"</div>
     <div class="htp-close-hint">화면을 클릭하면 닫힙니다</div>
   </div>
 </div>
