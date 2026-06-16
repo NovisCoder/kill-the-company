@@ -197,6 +197,70 @@ input[type=text]::placeholder{color:rgba(255,255,255,.3)}
 #awake-tap{font-size:18px;color:rgba(255,255,255,.75);letter-spacing:.15em;margin-top:32px;text-shadow:0 0 12px rgba(255,255,255,.4)}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.15}}
 
+/* 플레이 방법 버튼 */
+#how-to-play-btn{
+  display:none;
+  position:fixed;
+  top:calc(10px + var(--safe-top, 0px));
+  left:50%;
+  transform:translateX(-50%);
+  z-index:500;
+  background:#E8192C;
+  color:#fff;
+  border:none;
+  border-radius:24px;
+  padding:9px 22px;
+  font-size:13px;
+  font-weight:700;
+  cursor:pointer;
+  letter-spacing:.05em;
+  white-space:nowrap;
+  animation:htpBlink 1.4s ease-in-out infinite;
+  box-shadow:0 2px 14px rgba(232,25,44,.5);
+}
+@keyframes htpBlink{
+  0%,100%{opacity:1;box-shadow:0 2px 14px rgba(232,25,44,.55)}
+  50%{opacity:.55;box-shadow:none}
+}
+
+/* 플레이 방법 오버레이 */
+#how-to-play-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.78);
+  z-index:9000;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+}
+#how-to-play-box{
+  background:#10101e;
+  border:2px solid #E8192C;
+  border-radius:16px;
+  padding:36px 32px 32px;
+  max-width:340px;
+  width:88%;
+  text-align:center;
+  position:relative;
+  cursor:default;
+  box-shadow:0 0 40px rgba(232,25,44,.35);
+}
+#how-to-play-box .htp-label{
+  font-size:11px;color:#E8192C;letter-spacing:.25em;margin-bottom:18px;
+}
+#how-to-play-box .htp-text{
+  font-size:18px;font-weight:700;color:#fff;line-height:2.1;
+}
+#how-to-play-box .htp-close-hint{
+  margin-top:22px;font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.08em;
+}
+#how-to-play-close{
+  position:absolute;top:12px;right:14px;
+  background:none;border:none;color:rgba(255,255,255,.4);
+  font-size:18px;cursor:pointer;line-height:1;
+}
+
 .cat-img{width:100%;height:100%;object-fit:cover;object-position:center top;display:block;position:absolute;inset:0;}
 .cat-wrap{position:absolute;inset:0;display:flex;flex-direction:column;}
 .cat-dialog-overlay{position:absolute;bottom:0;left:0;right:0;padding:16px 16px 40px;background:linear-gradient(transparent,rgba(0,0,0,.85) 40%);z-index:3;}
@@ -621,7 +685,7 @@ input[type=text]{
     <div class="cl red" id="bc4">산업 스파이다.</div>
     <div style="height:16px"></div>
     <div class="cl" id="bc5">지령: 일루셔니스트 게임즈를 무너뜨릴</div>
-    <div class="cl" id="bc6">결정적 단서 8개를 확보하라.</div>
+    <div class="cl" id="bc6">결정적 단서 6개를 확보하라.</div>
     <div style="height:24px"></div>
     <button class="btn btn-red" id="brief-go" style="display:none;max-width:260px" onclick="gotoR1()">임무 개시 →</button>
   </div>
@@ -754,47 +818,6 @@ input[type=text]{
       <rect class="clue-border" x="1" y="1" width="98" height="98" rx="4" style="animation-delay:0s,0s"/>
     </svg>
 
-    <!-- 07: 책상 중앙 메모들 (left~33%, top~12%) -->
-    <svg id="h-07" class="hs-svg" viewBox="0 0 100 100" preserveAspectRatio="none"
-      style="left:46%;top:41%;width:12%;height:5%;position:absolute;overflow:visible"
-      onclick="openPop('07',2)">
-      <rect class="clue-hit" x="1" y="1" width="98" height="98" rx="5"/>
-      <rect class="clue-border" x="1" y="1" width="98" height="98" rx="5" style="animation-delay:.3s,.3s"/>
-    </svg>
-
-    <!-- 08: 코르크보드 중앙 차트 (left~55%, top~15%) -->
-    <svg id="h-08" class="hs-svg" viewBox="0 0 100 100" preserveAspectRatio="none"
-      style="left:48%;top:14%;width:19%;height:12%;position:absolute;overflow:visible"
-      onclick="openPop('08',2)">
-      <rect class="clue-hit" x="1" y="1" width="98" height="98" rx="4"/>
-      <rect class="clue-border" x="1" y="1" width="98" height="98" rx="4" style="animation-delay:.6s,.6s"/>
-    </svg>
-
-    <!-- 09: 책상 노트북 (left~20%, top~55%) -->
-    <svg id="h-09" class="hs-svg" viewBox="0 0 100 100" preserveAspectRatio="none"
-      style="left:23%;top:37%;width:22%;height:11%;position:absolute;overflow:visible"
-      onclick="openPop('09',2)">
-      <!-- 노트북 형태: 화면부 -->
-      <rect class="clue-hit" x="1" y="1" width="98" height="98" rx="4"/>
-      <rect class="clue-border" x="1" y="1" width="98" height="98" rx="4" style="animation-delay:.9s,.9s"/>
-    </svg>
-
-    <!-- 10: 소파 테이블 왼쪽 서류 (left~30%, top~78%) -->
-    <svg id="h-10" class="hs-svg" viewBox="0 0 100 100" preserveAspectRatio="none"
-      style="left:22%;top:68%;width:25%;height:11%;position:absolute;overflow:visible"
-      onclick="openPop('10',2)">
-      <rect class="clue-hit" x="1" y="1" width="98" height="98" rx="3"/>
-      <rect class="clue-border" x="1" y="1" width="98" height="98" rx="3" style="animation-delay:1.2s,1.2s"/>
-    </svg>
-
-    <!-- 14: 책상 앞 메모지 (left~3%, top~68%) -->
-    <svg id="h-14" class="hs-svg" viewBox="0 0 100 100" preserveAspectRatio="none"
-      style="left:17%;top:53%;width:13%;height:10%;position:absolute;overflow:visible"
-      onclick="openPop('14',2)">
-      <rect class="clue-hit" x="1" y="1" width="98" height="98" rx="5"/>
-      <rect class="clue-border" x="1" y="1" width="98" height="98" rx="5" style="animation-delay:.4s,.4s"/>
-    </svg>
-
     <!-- 15: 소파 테이블 태블릿 (left~52%, top~82%) -->
     <svg id="h-15" class="hs-svg" viewBox="0 0 100 100" preserveAspectRatio="none"
       style="left:49%;top:68%;width:16%;height:11%;position:absolute;overflow:visible"
@@ -863,7 +886,7 @@ input[type=text]{
     <!-- 과제 카드 + 안내문을 같은 스크롤 영역 안에 배치 -->
     <div id="p2-scroll">
       <div id="p2-grid"></div>
-      <div id="p2-guide">꿈속에서 찾았던 8개의 클루입니다.
+      <div id="p2-guide">꿈속에서 찾았던 6개의 클루입니다.
 각각의 클루를 선택해 일루셔니스트 대표로서
 올바른 의사결정을 선택하세요.</div>
     </div>
@@ -905,7 +928,7 @@ input[type=text]{
 <div class="scr" id="s-result">
   <div class="result-wrap">
     <div class="grade" id="r-grade"></div>
-    <div class="score-txt" id="r-score"></div>
+    <div class="score-txt" id="r-score" style="display:none"></div>
     <div class="r-title" id="r-title"></div>
     <div class="r-body" id="r-body"></div>
     <div class="r-extra" id="r-extra" style="display:none"></div>
@@ -932,6 +955,24 @@ input[type=text]{
       </div>
     </div>
   </div>
+
+<!-- 플레이 방법 버튼 (1페이즈 전용, position:fixed라 맵 이동에도 유지) -->
+<button id="how-to-play-btn" onclick="openHowToPlay()">📋 플레이 방법</button>
+
+<!-- 플레이 방법 오버레이 배너 -->
+<div id="how-to-play-overlay" onclick="closeHowToPlay()">
+  <div id="how-to-play-box" onclick="event.stopPropagation()">
+    <button id="how-to-play-close" onclick="closeHowToPlay()">✕</button>
+    <div class="htp-label">HOW TO PLAY</div>
+    <div class="htp-text">
+      당신은 경쟁사 데빌 게임즈에서 고용한<br>
+      산업스파이입니다.<br>
+      일루셔니스트 게임즈에게 불리해 보이는<br>
+      클루를 수집해 빅보스를 찾아가세요.
+    </div>
+    <div class="htp-close-hint">화면을 클릭하면 닫힙니다</div>
+  </div>
+</div>
 
 </div><!-- #app -->
 <script src="data.js"></script>

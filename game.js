@@ -114,11 +114,31 @@ function runBrief(){
   setTimeout(function(){ document.getElementById('brief-go').style.display='block'; }, 400 + ids.length*800 + 500);
 }
  
-// ── 방탈출 이동 ──
+// ── 플레이 방법 버튼 제어 ──
+function showHowToPlayBtn(){
+  var btn = document.getElementById('how-to-play-btn');
+  if(btn) btn.style.display = 'block';
+}
+function hideHowToPlayBtn(){
+  var btn = document.getElementById('how-to-play-btn');
+  if(btn) btn.style.display = 'none';
+  closeHowToPlay();
+}
+function openHowToPlay(){
+  var ov = document.getElementById('how-to-play-overlay');
+  if(ov){ ov.style.display = 'flex'; }
+}
+function closeHowToPlay(){
+  var ov = document.getElementById('how-to-play-overlay');
+  if(ov){ ov.style.display = 'none'; }
+}
+
+
 var _r1FirstVisit = true; // 첫 방 진입 여부 플래그
 
 function gotoR1(){
   show('s-r1');
+  showHowToPlayBtn();
   updateDots();
   // r1 이동 버튼 펄스 ON, r2 버튼 펄스 OFF
   setMovePulse('move-btn-r1', true);
@@ -134,6 +154,7 @@ function gotoR2(){
   var tip = document.getElementById('nav-tooltip');
   if(tip) tip.style.display = 'none';
   show('s-r2');
+  showHowToPlayBtn();
   updateDots();
   checkMeetBtn();
   // r2 이동 버튼 펄스 ON, r1 버튼 펄스 OFF
@@ -186,7 +207,7 @@ function updateDots(){
 }
  
 function checkMeetBtn(){
-  var ok = correctCount() >= 8;
+  var ok = correctCount() >= 6;
   var mw1 = document.getElementById('meet-wrap-r1');
   var mw2 = document.getElementById('meet-wrap');
   if(mw1) mw1.style.display = ok ? 'block' : 'none';
@@ -272,6 +293,7 @@ var BOSS = [
  
 function gotoBoss(){
   G.bossStep = 0;
+  hideHowToPlayBtn();
   document.getElementById('boss-lines').innerHTML = '';
   var meet = document.getElementById('boss-img-meet');
   var gun  = document.getElementById('boss-img-gun');
@@ -588,18 +610,15 @@ function doSubmit(){
  
 // ── 점수 계산 ──
 function calcResult(){
-  var p2=0, traps=0;
+  var p2=0;
   Object.entries(G.choices).forEach(function(e){
     var ch=e[1];
     p2 += ch.score;
-    if(ch.score===0) traps++;
   });
-  p2 = Math.min(40, p2);
+  p2 = Math.min(30, p2);
  
-  var pen=0;
-  if(traps>=4) pen+=5;
-  var total = Math.max(0, Math.min(40, p2-pen));
-  var grade = total>=36?'S':total>=26?'A':total>=16?'B':total>=6?'C':'D';
+  var total = Math.max(0, Math.min(30, p2));
+  var grade = total>=30?'S':total>=20?'A':total>=15?'B':total>=10?'C':'D';
  
   saveLog(total, grade);
  
@@ -621,7 +640,7 @@ function calcResult(){
  
   document.getElementById('r-grade').textContent = grade;
   document.getElementById('r-grade').style.color = gColors[grade];
-  document.getElementById('r-score').textContent = total+'점 / 40점';
+  document.getElementById('r-score').textContent = total+'점 / 30점';
   document.getElementById('r-title').textContent = gTitles[grade];
   document.getElementById('r-body').textContent = gBodies[grade];
 
@@ -705,6 +724,7 @@ function restartAll(){
   // 첫 방문 툴팁 플래그 초기화
   _r1FirstVisit = true;
   stopMovePulse();
+  hideHowToPlayBtn();
   // 시작하기 버튼 복원, 로그인 필드 숨기기
   var btnEnter = document.getElementById('btn-enter');
   var loginFields = document.getElementById('login-fields');
