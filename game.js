@@ -134,7 +134,25 @@ function closeHowToPlay(){
 }
 
 
-var _r1FirstVisit = true; // 첫 방 진입 여부 플래그
+function openHowToPlayP2(){
+  var ov = document.getElementById('how-to-play-overlay-p2');
+  if(ov){ ov.style.display = 'flex'; }
+}
+function closeHowToPlayP2(){
+  var ov = document.getElementById('how-to-play-overlay-p2');
+  if(ov){ ov.style.display = 'none'; }
+}
+function showHowToPlayBtnP2(){
+  var btn = document.getElementById('how-to-play-btn-p2');
+  if(btn) btn.style.display = 'block';
+}
+function hideHowToPlayBtnP2(){
+  var btn = document.getElementById('how-to-play-btn-p2');
+  if(btn) btn.style.display = 'none';
+  closeHowToPlayP2();
+}
+
+ // 첫 방 진입 여부 플래그
 
 function gotoR1(){
   show('s-r1');
@@ -279,7 +297,7 @@ function collect(room){
 var BOSS = [
   {t:'line', tx:'어두운 주차장. 검은 차 안.'},
   {t:'line', tx:'데빌 게임즈 빅보스가 기다리고 있다.'},
-  {t:'line', tx:'클루 8개를 모두 전달했다.'},
+  {t:'line', tx:'클루 6개를 모두 전달했다.'},
   {t:'dlg',  sp:'빅보스 (데빌 게임즈)', tx:'수고했어. 역시 소문대로군. 믿을 만해.'},
   {t:'sp'},
   {t:'switch-gun'},
@@ -362,9 +380,9 @@ var AWAKE = [
   {t:'line', tx:'"꿈이었구나…"', white:true},
   {t:'line', tx:'"꿈이었지만...\n일루셔니스트 게임즈의 약점들...\n대표로서 무시할 수 없는 현실이었어."', white:true},
   {t:'line', tx:'"일루셔니스트 게임즈 대표로서\n지금부터 내가 해결해야 할 과제들이야"'},
-  {t:'dlg-cat', img:'smile', sp:'비서 이노', tx:'대표님, 그럼 결재 8건은 천천히 보시고\n다시 결재 부탁드릴게요~ 😊'},
+  {t:'dlg-cat', img:'smile', sp:'비서 이노', tx:'대표님, 그럼 결재 6건은 천천히 보시고\n다시 결재 부탁드릴게요~ 😊'},
   {t:'cat-exit'},
-  {t:'line', tx:'"꿈에서 봤던 8개의 약점들...\n사실은 내가 해야할 의사결정들이었구나!"', white:true},
+  {t:'line', tx:'"꿈에서 봤던 6개의 약점들...\n사실은 내가 해야할 의사결정들이었구나!"', white:true},
   {t:'line', tx:'"좋아, 그럼 의사결정을 시작 해볼까?\n일루셔니스트 게임즈 대표로서!"', white:true},
   {t:'next'}
 ];
@@ -458,9 +476,11 @@ function nextAwake(){
 function startP2(){
   stopMovePulse(); // 1페이즈 이동 버튼 펄스 종료
   G.p2Queue = Object.keys(G.collected).filter(function(id){return G.collected[id].correct;});
+  G.p2Queue.sort(function(a,b){ return CORRECT_IDS.indexOf(a) - CORRECT_IDS.indexOf(b); });
   G.choices = {};
   // 🔊 phase2 BGM은 각성씬 비서 이노 등장 시 이미 시작됨
   show('s-p2');
+  showHowToPlayBtnP2();
   buildP2Grid();
   document.getElementById('p2-badge').textContent = '0/'+G.p2Queue.length;
   document.getElementById('p2-txt').textContent = '과제를 선택해 해결 방법을 결정하세요';
@@ -598,6 +618,7 @@ function closeSubmitPop(){
  
 function doSubmit(){
   document.getElementById('ov-submit').style.display='none';
+  hideHowToPlayBtnP2();
   revealP2Results();
   // 🔊 phase2 BGM 정지 → 컷씬 시작
   stopBgm();
@@ -725,6 +746,7 @@ function restartAll(){
   _r1FirstVisit = true;
   stopMovePulse();
   hideHowToPlayBtn();
+  hideHowToPlayBtnP2();
   // 시작하기 버튼 복원, 로그인 필드 숨기기
   var btnEnter = document.getElementById('btn-enter');
   var loginFields = document.getElementById('login-fields');
@@ -739,11 +761,13 @@ function restartP2(){
   playBgm('phase2');
   G.choices={};
   G.p2Queue = Object.keys(G.collected).filter(function(id){return G.collected[id].correct;});
+  G.p2Queue.sort(function(a,b){ return CORRECT_IDS.indexOf(a) - CORRECT_IDS.indexOf(b); });
   var subBar = document.getElementById('sub-bar');
   if(subBar) subBar.style.display='none';
   var ovSubmit = document.getElementById('ov-submit');
   if(ovSubmit) ovSubmit.style.display='none';
   show('s-p2');
+  showHowToPlayBtnP2();
   buildP2Grid();
   var badge = document.getElementById('p2-badge');
   var txt = document.getElementById('p2-txt');
