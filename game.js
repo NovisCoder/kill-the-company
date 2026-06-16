@@ -288,7 +288,7 @@ function collect(room){
       toastMsg.style.whiteSpace = 'pre-line';
       toastMsg.textContent = msg;
       toast.style.display = 'flex';
-      setTimeout(function(){ toast.style.display = 'none'; }, 1800);
+      setTimeout(function(){ toast.style.display = 'none'; }, 500);
     }
   }
 }
