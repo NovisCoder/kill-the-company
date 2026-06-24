@@ -107,12 +107,42 @@ function startGame(){
 }
  
 function runBrief(){
-  // 브리핑 화면은 모든 텍스트가 처음부터 보입니다.
-  // 짧은 딜레이 후 "임무 개시" 버튼만 표시합니다.
+  // 요소 초기화
+  var header = document.getElementById('bh-header');
+  var mbox   = document.getElementById('missionBox');
+  var goBtn  = document.getElementById('brief-go');
+  if(header){ header.classList.remove('show'); }
+  if(mbox)  { mbox.classList.remove('show'); }
+  if(goBtn) { goBtn.style.display = 'none'; }
+  document.querySelectorAll('#briefTextBlock .brief-line').forEach(function(el){
+    el.classList.remove('show');
+  });
+
+  // 순차 등장 타이밍 (ms)
+  var seq = [
+    { id:'bh-header',  cls:'show',  t: 200  },   // CLASSIFIED 헤더
+    { id:'bc0',        cls:'show',  t: 700  },   // 2031년…
+    { id:'bc1',        cls:'show',  t: 1500 },   // 당신은…
+    { id:'bc2',        cls:'show',  t: 2500 },   // 그러나 진짜 정체는…
+    { id:'bc3',        cls:'show',  t: 3600 },   // 사실은 경쟁 게임사…
+    { id:'bc4',        cls:'show',  t: 4400 },   // 산업 스파이…
+    { id:'bc5',        cls:'show',  t: 5200 },   // "망가트려라"
+    { id:'missionBox', cls:'show',  t: 6400 },   // 미션 박스
+    { id:'bm1',        cls:'show',  t: 6700 },   // 미션 텍스트 1
+    { id:'bm2',        cls:'show',  t: 7300 },   // 미션 텍스트 2
+  ];
+
+  seq.forEach(function(s){
+    setTimeout(function(){
+      var el = document.getElementById(s.id);
+      if(el) el.classList.add(s.cls);
+    }, s.t);
+  });
+
+  // 임무 개시 버튼
   setTimeout(function(){
-    var go = document.getElementById('brief-go');
-    if(go) go.style.display = 'block';
-  }, 1200);
+    if(goBtn) goBtn.style.display = 'block';
+  }, 8200);
 }
  
 // ── 플레이 방법 버튼 제어 ──
@@ -729,6 +759,10 @@ function restartAll(){
   G = {name:'',startTime:0,collected:{},choices:{},activePop:null,activeRoom:0,bossStep:0,awakeStep:0,p2Queue:[],p2Cursor:0};
   document.getElementById('inp-name').value='';
   document.getElementById('brief-go').style.display='none';
+  // 브리핑 요소 초기화
+  document.querySelectorAll('#briefTextBlock .brief-line').forEach(function(el){ el.classList.remove('show'); });
+  var bh = document.getElementById('bh-header'); if(bh) bh.classList.remove('show');
+  var mb = document.getElementById('missionBox'); if(mb) mb.classList.remove('show');
   document.querySelectorAll('.cl').forEach(function(el){el.classList.remove('on');});
   document.getElementById('boss-lines').innerHTML='';
   document.getElementById('awake-lines').innerHTML='';
