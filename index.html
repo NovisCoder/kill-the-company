@@ -778,233 +778,44 @@ input[type=text]{
 </div>
 
 <!-- 브리핑 -->
+
 <div class="scr" id="s-brief">
-  <div class="cin briefing-wrap" id="briefingWrap">
 
-    <div class="brief-line cl" id="bc0">2031년. 게임업계 라이벌의 시대.</div>
+  <div class="cin">
 
-    <div class="brief-line cl" id="bc1">
-      당신은 게임업계 1위 <strong style="color:#fff">일루셔니스트 게임즈</strong> 경영기획 실장.
-    </div>
+    <div class="cl" id="bc0">2031년. 게임업계 라이벌의 시대.</div>
 
-    <div class="brief-line cl" id="bc2">그러나 진짜 정체는 따로 있다.</div>
+    <div class="cl" id="bc1">당신은 게임업계 1위 <strong style="color:#fff">일루셔니스트 게임즈</strong> 경영기획 실장.</div>
 
-    <div style="height:16px"></div>
-
-    <div class="brief-line cl red" id="bc3">
-      사실은 경쟁 게임사 '데빌 게임즈'가 심어 놓은
-    </div>
-
-    <div class="brief-line cl red" id="bc4">
-      산업 스파이, 당신이 받은 지령은
-    </div>
-
-    <div class="brief-line cl red" id="bc5">
-      "경쟁사 일루셔니스트의 기업 이미지를 망가트려라."
-    </div>
+    <div class="cl" id="bc2">그러나 진짜 정체는 따로 있다.</div>
 
     <div style="height:16px"></div>
 
-    <!-- 플레이어 미션 -->
-    <div class="mission-box" id="missionBox">
-      <div class="brief-line mission-line">[플레이어 미션]</div>
-      <div class="brief-line mission-line">일루셔니스트 게임즈가 혁신적인 기업이 아니라는</div>
-      <div class="brief-line mission-line">결정적 단서 6개를 확보하라</div>
-    </div>
+    <div class="cl red" id="bc3">사실은 경쟁 게임사 '데빌 게임즈'가 심어 놓은</div>
+
+    <div class="cl red" id="bc4">산업 스파이, 당신이 받은 지령은</div>
+
+    <div class="cl red" id="bc5">"경쟁사 일루셔니스트의 기업 이미지를 망가트려라."</div>
+
+    <div style="height:16px"></div>
+
+    <!-- id를 bc5_1과 bc6_1로 변경하여 중복을 제거했습니다. -->
+
+    <div class="cl" id="bc5_1" style="font-size:clamp(14px,4.5vw,18px);font-weight:700">[플레이어 미션]</div>
+
+    <div class="cl" id="bc6_1" style="font-size:clamp(14px,4.5vw,18px);font-weight:700">일루셔니스트 게임즈가 혁신적인 기업이 아니라는</div>
+
+    <div class="cl" id="bc7_1" style="font-size:clamp(14px,4.5vw,18px);font-weight:700">결정적 단서 6개를 확보하라</div>
+
+
 
     <div style="height:27px"></div>
 
-    <button
-      class="btn btn-red"
-      id="brief-go"
-      style="display:none;max-width:260px"
-      onclick="gotoR1()"
-    >
-      임무 개시 →
-    </button>
+    <button class="btn btn-red" id="brief-go" style="display:none;max-width:260px" onclick="gotoR1()">임무 개시 →</button>
 
   </div>
+
 </div>
-
-<style>
-  /* 브리핑 전체 영역 */
-  .briefing-wrap {
-    width: min(94vw, 720px);
-    margin: 0 auto;
-    text-align: center;
-    position: relative;
-    z-index: 10;
-    overflow: visible;
-  }
-
-  /*
-    모든 브리핑 문장 공통 설정
-    - 한 문장이 중간에서 마음대로 줄바꿈되지 않도록 nowrap
-    - JS가 실제 화면 폭을 계산해서 자동 축소
-  */
-  .brief-line {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    max-width: 100%;
-    color: #ffffff;
-    font-weight: 700;
-    line-height: 1.55;
-    text-align: center;
-    white-space: nowrap;
-    word-break: keep-all;
-    overflow: visible;
-
-    /*
-      모바일 브라우저의 자동 글자 확대를 억제.
-      접근성 설정 자체를 완전히 무시하는 것은 아니지만,
-      레이아웃 깨짐을 줄여줍니다.
-    */
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
-  }
-
-  .brief-line.red,
-  .cl.red {
-    color: #ff4d4d !important;
-  }
-
-  .brief-line strong {
-    white-space: nowrap;
-  }
-
-  /* 플레이어 미션 영역 */
-  .mission-box {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    width: 100%;
-    margin: 0 auto;
-    text-align: center;
-    position: relative;
-    z-index: 9999;
-  }
-
-  .mission-line {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    color: #ffffff !important;
-    font-weight: 800;
-  }
-
-  /*
-    기본 글자 크기.
-    실제 최종 크기는 아래 JS에서 화면 폭에 맞춰 자동 조정됩니다.
-  */
-  #bc0,
-  #bc1,
-  #bc2,
-  #bc3,
-  #bc4,
-  #bc5,
-  .mission-line {
-    font-size: 18px;
-  }
-
-  @media (max-width: 480px) {
-    .briefing-wrap {
-      width: 94vw;
-    }
-
-    #bc0,
-    #bc1,
-    #bc2,
-    #bc3,
-    #bc4,
-    #bc5,
-    .mission-line {
-      font-size: 16px;
-    }
-  }
-
-  @media (max-width: 360px) {
-    #bc0,
-    #bc1,
-    #bc2,
-    #bc3,
-    #bc4,
-    #bc5,
-    .mission-line {
-      font-size: 15px;
-    }
-  }
-</style>
-
-<script>
-  function fitBriefingText() {
-    const wrap = document.getElementById("briefingWrap");
-    if (!wrap) return;
-
-    const lines = wrap.querySelectorAll(".brief-line");
-    if (!lines.length) return;
-
-    const viewportWidth = window.innerWidth;
-
-    let maxFontSize = 18;
-
-    if (viewportWidth <= 480) {
-      maxFontSize = 16;
-    }
-
-    if (viewportWidth <= 360) {
-      maxFontSize = 15;
-    }
-
-    const minFontSize = 9;
-
-    /*
-      먼저 모든 문장을 기본 크기로 되돌린 뒤,
-      가장 긴 문장이 화면을 넘치지 않을 때까지
-      전체 문장 글자 크기를 함께 줄입니다.
-    */
-    lines.forEach(function (line) {
-      line.style.fontSize = maxFontSize + "px";
-    });
-
-    let currentFontSize = maxFontSize;
-    let needsShrink = true;
-
-    while (needsShrink && currentFontSize > minFontSize) {
-      needsShrink = false;
-
-      lines.forEach(function (line) {
-        if (line.scrollWidth > wrap.clientWidth) {
-          needsShrink = true;
-        }
-      });
-
-      if (needsShrink) {
-        currentFontSize -= 1;
-
-        lines.forEach(function (line) {
-          line.style.fontSize = currentFontSize + "px";
-        });
-      }
-    }
-  }
-
-  window.addEventListener("load", fitBriefingText);
-  window.addEventListener("resize", fitBriefingText);
-
-  window.addEventListener("orientationchange", function () {
-    setTimeout(fitBriefingText, 300);
-  });
-
-  /*
-    폰트 로딩 후 실제 글자 폭이 달라질 수 있어서 한 번 더 보정합니다.
-  */
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(function () {
-      fitBriefingText();
-    });
-  }
-</script>
 
 <!-- 1페이즈: 대회의실 -->
 <div class="scr" id="s-r1" style="position:relative">
