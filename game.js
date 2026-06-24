@@ -107,11 +107,12 @@ function startGame(){
 }
  
 function runBrief(){
-  var ids=['bc0','bc1','bc2','bc3','bc4','bc5','bc6'];
-  ids.forEach(function(id,i){
-    setTimeout(function(){ document.getElementById(id).classList.add('on'); }, 400 + i*800);
-  });
-  setTimeout(function(){ document.getElementById('brief-go').style.display='block'; }, 400 + ids.length*800 + 500);
+  // 브리핑 화면은 모든 텍스트가 처음부터 보입니다.
+  // 짧은 딜레이 후 "임무 개시" 버튼만 표시합니다.
+  setTimeout(function(){
+    var go = document.getElementById('brief-go');
+    if(go) go.style.display = 'block';
+  }, 1200);
 }
  
 // ── 플레이 방법 버튼 제어 ──

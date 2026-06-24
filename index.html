@@ -778,44 +778,127 @@ input[type=text]{
 </div>
 
 <!-- 브리핑 -->
+<div class="scr" id="s-brief" style="background:#000;overflow:hidden">
+  <div id="briefingWrap" style="
+    width:100%; height:100%;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:24px 0;
+    overflow:hidden;
+  ">
+    <!-- 글자들을 감싸는 실제 측정 컨테이너 -->
+    <div id="briefTextBlock" style="
+      display:flex; flex-direction:column;
+      align-items:center; gap:0;
+      width:max-content; max-width:92vw;
+    ">
+      <div class="brief-line" id="bc0">2031년. 게임업계 라이벌의 시대.</div>
 
-<div class="scr" id="s-brief">
+      <div class="brief-line" id="bc1">
+        당신은 게임업계 1위 <strong style="color:#fff">일루셔니스트 게임즈</strong> 경영기획 실장.
+      </div>
 
-  <div class="cin">
+      <div class="brief-line" id="bc2">그러나 진짜 정체는 따로 있다.</div>
 
-    <div class="cl" id="bc0">2031년. 게임업계 라이벌의 시대.</div>
+      <div style="height:16px;flex-shrink:0"></div>
 
-    <div class="cl" id="bc1">당신은 게임업계 1위 <strong style="color:#fff">일루셔니스트 게임즈</strong> 경영기획 실장.</div>
+      <div class="brief-line brief-red" id="bc3">사실은 경쟁 게임사 '데빌 게임즈'가 심어 놓은</div>
+      <div class="brief-line brief-red" id="bc4">산업 스파이, 당신이 받은 지령은</div>
+      <div class="brief-line brief-red" id="bc5">"경쟁사 일루셔니스트의 기업 이미지를 망가트려라."</div>
 
-    <div class="cl" id="bc2">그러나 진짜 정체는 따로 있다.</div>
+      <div style="height:16px;flex-shrink:0"></div>
 
-    <div style="height:16px"></div>
+      <!-- 플레이어 미션 -->
+      <div id="missionBox" style="
+        width:100%; text-align:center;
+        border:1px solid rgba(255,255,255,.2);
+        border-radius:8px;
+        padding:12px 16px;
+        background:rgba(255,255,255,.04);
+        margin-top:4px;
+      ">
+        <div class="brief-line brief-mission">[플레이어 미션]</div>
+        <div class="brief-line brief-mission">일루셔니스트 게임즈가 혁신적인 기업이 아니라는</div>
+        <div class="brief-line brief-mission">결정적 단서 6개를 확보하라</div>
+      </div>
+    </div>
 
-    <div class="cl red" id="bc3">사실은 경쟁 게임사 '데빌 게임즈'가 심어 놓은</div>
+    <div style="height:27px;flex-shrink:0"></div>
 
-    <div class="cl red" id="bc4">산업 스파이, 당신이 받은 지령은</div>
-
-    <div class="cl red" id="bc5">"경쟁사 일루셔니스트의 기업 이미지를 망가트려라."</div>
-
-    <div style="height:16px"></div>
-
-    <!-- id를 bc5_1과 bc6_1로 변경하여 중복을 제거했습니다. -->
-
-    <div class="cl" id="bc5_1" style="font-size:clamp(14px,4.5vw,18px);font-weight:700">[플레이어 미션]</div>
-
-    <div class="cl" id="bc6_1" style="font-size:clamp(14px,4.5vw,18px);font-weight:700">일루셔니스트 게임즈가 혁신적인 기업이 아니라는</div>
-
-    <div class="cl" id="bc7_1" style="font-size:clamp(14px,4.5vw,18px);font-weight:700">결정적 단서 6개를 확보하라</div>
-
-
-
-    <div style="height:27px"></div>
-
-    <button class="btn btn-red" id="brief-go" style="display:none;max-width:260px" onclick="gotoR1()">임무 개시 →</button>
+    <button
+      class="btn btn-red"
+      id="brief-go"
+      style="display:none;max-width:260px"
+      onclick="gotoR1()"
+    >
+      임무 개시 →
+    </button>
 
   </div>
-
 </div>
+
+<style>
+  /* ── 브리핑 공통 ── */
+  .brief-line {
+    display: block;
+    white-space: nowrap;          /* 줄바꿈 절대 안 함 — JS가 폰트 크기로 맞춤 */
+    text-align: center;
+    font-weight: 700;
+    line-height: 1.6;
+    color: #fff;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  .brief-line strong { white-space: nowrap; color: #fff; }
+  .brief-red  { color: #ff4d4d !important; }
+  .brief-mission {
+    color: #fff !important;
+    font-weight: 800 !important;
+  }
+</style>
+
+<script>
+(function(){
+  /* ── 브리핑 텍스트 자동 크기 맞춤 ──
+     원리: #briefTextBlock 전체를 화면 폭의 88% 이내로 유지하면서
+           모든 .brief-line 의 폰트 크기를 동일하게 줄인다.
+     - white-space:nowrap 으로 줄바꿈을 완전히 막아두었기 때문에
+       scrollWidth 가 실제 렌더 너비와 정확히 일치한다.
+  */
+  var MAX_FS = 18, MIN_FS = 9;
+
+  function fitBriefingText() {
+    var block = document.getElementById('briefTextBlock');
+    if (!block) return;
+
+    var lines = block.querySelectorAll('.brief-line');
+    if (!lines.length) return;
+
+    /* 사용 가능한 최대 폭 = 뷰포트의 88% */
+    var avail = window.innerWidth * 0.88;
+
+    /* 1단계: 최대 폰트 크기로 리셋 */
+    var fs = MAX_FS;
+    lines.forEach(function(l){ l.style.fontSize = fs + 'px'; });
+
+    /* 2단계: 가장 넓은 줄이 avail 이내가 될 때까지 1px씩 줄임 */
+    while (fs > MIN_FS) {
+      var maxW = 0;
+      lines.forEach(function(l){ maxW = Math.max(maxW, l.scrollWidth); });
+      if (maxW <= avail) break;
+      fs--;
+      lines.forEach(function(l){ l.style.fontSize = fs + 'px'; });
+    }
+  }
+
+  window.addEventListener('load', fitBriefingText);
+  window.addEventListener('resize', fitBriefingText);
+  window.addEventListener('orientationchange', function(){ setTimeout(fitBriefingText, 300); });
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(fitBriefingText);
+  }
+})();
+</script>
 
 <!-- 1페이즈: 대회의실 -->
 <div class="scr" id="s-r1" style="position:relative">
