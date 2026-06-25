@@ -103,6 +103,7 @@ function startGame(){
   stopBgm();
   playBgm('phase1');
   show('s-brief');
+  if (typeof window.fitBriefingText === 'function') window.fitBriefingText();
   runBrief();
 }
  

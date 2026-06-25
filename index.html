@@ -815,24 +815,8 @@ input[type=text]{
   <div class="intro-bg"></div>
   <div class="intro-scanline"></div>
 
-  <!-- flex 컨테이너: 로고(위) + 하단 입력(아래) -->
-  <div class="intro-flex-wrap">
-
-    <!-- 로고 영역 (중앙 상단) -->
-    <div class="intro-logo-area">
-      <div class="intro-top-badge" style="position:relative;top:auto;left:auto;right:auto;animation:fadeSlideDown .8s .3s both;display:flex;justify-content:center;margin-bottom:clamp(12px,3vh,24px)">
-        <span>CLASSIFIED MISSION</span>
-      </div>
-      <div class="intro-center-logo" style="position:relative;top:auto;left:auto;transform:none;animation:logoReveal2 1.2s .4s both;">
-        <div class="intro-classified">KILL THE COMPANY</div>
-        <div class="intro-logo-kill">KILL</div>
-        <div class="intro-logo-sub">COMPANY</div>
-        <div class="intro-tagline">산업 스파이가 되어 경쟁사를 무너뜨려라</div>
-      </div>
-    </div>
-
-    <!-- 하단 입력 영역 -->
-    <div class="intro-bottom" style="position:relative;bottom:auto;left:auto;right:auto;">
+  <!-- 하단 입력 영역 -->
+  <div class="intro-bottom">
       <div class="intro-red-line"></div>
 
       <button class="btn-mission" id="btn-enter" onclick="enterGame()">▶ &nbsp;시작하기</button>
@@ -852,8 +836,6 @@ input[type=text]{
         <button onclick="openAdmin()" class="intro-admin-btn">관리자</button>
       </div>
     </div>
-
-  </div>
 </div>
 
 <!-- ══════════════════════════════════
@@ -1051,31 +1033,88 @@ input[type=text]{
 
 <script>
 /* ── 브리핑 텍스트 자동 크기 맞춤 ──
-   white-space:nowrap으로 줄바꿈을 막고,
-   가장 긴 줄이 뷰포트 88% 안에 들어올 때까지 1px씩 줄임.
+   Display Zoom / 확대 UI / 작은 화면 대응:
+   - visualViewport를 우선 사용해 실제 보이는 너비·높이를 정확히 파악
+   - 가로(너비 88%) 와 세로(briefingWrap 내부 높이) 양방향 overflow 감지
+   - 최소 9px까지 축소
 */
 (function(){
   var MAX_FS = 18, MIN_FS = 9;
+
+  function getViewSize() {
+    if (window.visualViewport) {
+      return { w: window.visualViewport.width, h: window.visualViewport.height };
+    }
+    return { w: window.innerWidth, h: window.innerHeight };
+  }
+
   function fitBriefingText() {
     var block = document.getElementById('briefTextBlock');
-    if (!block) return;
+    var wrap  = document.getElementById('briefingWrap');
+    if (!block || !wrap) return;
     var lines = block.querySelectorAll('.brief-line');
     if (!lines.length) return;
-    var avail = window.innerWidth * 0.88;
+
+    var vp = getViewSize();
+    var availW = vp.w * 0.88;
+    /* wrap 패딩(상 20px + 하 28px)과 헤더·버튼 영역(약 110px)을 제외한 가용 세로 공간 */
+    var availH = vp.h - 160;
+
     var fs = MAX_FS;
     lines.forEach(function(l){ l.style.fontSize = fs + 'px'; });
+
     while (fs > MIN_FS) {
+      /* 가로 초과 체크 */
       var maxW = 0;
       lines.forEach(function(l){ maxW = Math.max(maxW, l.scrollWidth); });
-      if (maxW <= avail) break;
+      /* 세로 초과 체크 */
+      var blockH = block.scrollHeight;
+
+      if (maxW <= availW && blockH <= availH) break;
       fs--;
       lines.forEach(function(l){ l.style.fontSize = fs + 'px'; });
     }
+
+    /* 폰트 크기에 비례해 줄 간격·간격도 압축 */
+    var ratio = fs / MAX_FS;
+    block.querySelectorAll('.brief-spacer').forEach(function(s){
+      s.style.height = Math.max(6, Math.round(14 * ratio)) + 'px';
+    });
+    var mbox = block.querySelector('.brief-mission-box');
+    if (mbox) {
+      var py = Math.max(7, Math.round(13 * ratio));
+      var px = Math.max(12, Math.round(20 * ratio));
+      mbox.style.padding = py + 'px ' + px + 'px ' + (py + 1) + 'px';
+    }
   }
-  window.addEventListener('load', fitBriefingText);
-  window.addEventListener('resize', fitBriefingText);
-  window.addEventListener('orientationchange', function(){ setTimeout(fitBriefingText, 300); });
-  if (document.fonts && document.fonts.ready) { document.fonts.ready.then(fitBriefingText); }
+
+  function schedFit(delay) {
+    setTimeout(fitBriefingText, delay || 0);
+  }
+
+  window.addEventListener('load',              function(){ schedFit(50); });
+  window.addEventListener('resize',            fitBriefingText);
+  window.addEventListener('orientationchange', function(){ schedFit(300); });
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', fitBriefingText);
+  }
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function(){ schedFit(50); });
+  }
+  /* showBriefing() 호출 후에도 실행되도록 전역 노출 */
+  window.fitBriefingText = fitBriefingText;
+
+  /* s-brief에 'on' 클래스가 추가될 때 자동 실행 */
+  var brief = document.getElementById('s-brief');
+  if (brief && window.MutationObserver) {
+    new MutationObserver(function(mutations) {
+      mutations.forEach(function(m) {
+        if (m.type === 'attributes' && m.attributeName === 'class') {
+          if (brief.classList.contains('on')) schedFit(80);
+        }
+      });
+    }).observe(brief, { attributes: true });
+  }
 })();
 </script>
 
@@ -1322,8 +1361,18 @@ input[type=text]{
     style="width:100%;height:100%;object-fit:contain;display:block">
   </video>
 
-  <!-- 영상 재생 완료 후에만 표시되는 Skip 버튼 -->
-  <div id="cs-skip-wrap" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:none;align-items:center;justify-content:center">
+  <!-- 디졸브용 검정 오버레이 -->
+  <div id="cs-dissolve" style="
+    position:absolute;inset:0;
+    background:#000;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity 2s ease;
+    z-index:5">
+  </div>
+
+  <!-- 영상 종료 후 표시되는 결과 보기 버튼 -->
+  <div id="cs-skip-wrap" style="display:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);align-items:center;justify-content:center;z-index:10">
     <button id="cs-skip-btn" onclick="csSkip()"
       style="padding:14px 40px;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.5);border-radius:8px;color:#fff;font-size:15px;font-weight:700;letter-spacing:.1em;cursor:pointer">
       결과 보기 →
@@ -1408,34 +1457,53 @@ input[type=text]{
 // ── 컷씬 엔진 (영상 기반) ──
 
 function csStart() {
-  var video = document.getElementById('cs-video');
+  var video    = document.getElementById('cs-video');
   var skipWrap = document.getElementById('cs-skip-wrap');
+  var dissolve = document.getElementById('cs-dissolve');
 
-  // Skip 버튼 숨기고, 영상 처음부터 재생
+  // 상태 초기화
   skipWrap.style.display = 'none';
+  dissolve.style.transition = 'none';
+  dissolve.style.opacity = '0';
   video.currentTime = 0;
 
-  // 영상 재생 완료 시 Skip 버튼 표시
+  // timeupdate: 잔여 2초부터 디졸브 시작
+  video.ontimeupdate = function() {
+    if (!video.duration) return;
+    var remaining = video.duration - video.currentTime;
+    if (remaining <= 2 && dissolve.style.opacity === '0') {
+      dissolve.style.transition = 'opacity 2s ease';
+      dissolve.style.opacity = '1';
+    }
+  };
+
+  // 영상 종료: 오버레이가 완전히 덮은 뒤 버튼 표시
   video.onended = function() {
+    dissolve.style.transition = 'none';
+    dissolve.style.opacity = '1';
     skipWrap.style.display = 'flex';
   };
 
-  // 재생 오류 시에도 Skip 버튼 표시 (fallback)
+  // 재생 오류 fallback
   video.onerror = function() {
+    dissolve.style.opacity = '1';
     skipWrap.style.display = 'flex';
   };
 
   video.play().catch(function() {
-    // 자동재생 차단 시 Skip 버튼을 바로 표시
     skipWrap.style.display = 'flex';
   });
 }
 
 function csSkip() {
-  var video = document.getElementById('cs-video');
+  var video    = document.getElementById('cs-video');
+  var dissolve = document.getElementById('cs-dissolve');
   video.pause();
-  video.onended = null;
-  video.onerror = null;
+  video.onended      = null;
+  video.onerror      = null;
+  video.ontimeupdate = null;
+  dissolve.style.transition = 'none';
+  dissolve.style.opacity = '0';
   calcResult();
 }
 
@@ -1443,12 +1511,15 @@ function csVideoReset() {
   var video = document.getElementById('cs-video');
   if (video) {
     video.pause();
-    video.currentTime = 0;
-    video.onended = null;
-    video.onerror = null;
+    video.currentTime  = 0;
+    video.onended      = null;
+    video.onerror      = null;
+    video.ontimeupdate = null;
   }
   var skipWrap = document.getElementById('cs-skip-wrap');
   if (skipWrap) skipWrap.style.display = 'none';
+  var dissolve = document.getElementById('cs-dissolve');
+  if (dissolve) { dissolve.style.transition = 'none'; dissolve.style.opacity = '0'; }
 }
 </script>
 </body>
