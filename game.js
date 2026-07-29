@@ -66,6 +66,106 @@ document.addEventListener('touchend', _clickSfx, true);
 var SUPABASE_URL = 'https://ypdiwxklslaeqxjcwtzs.supabase.co';
 var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlwZGl3eGtsc2xhZXF4amN3dHpzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5ODA0ODUsImV4cCI6MjA5NjU1NjQ4NX0.xkUGLsL8WKwskm0kqZymsdawowZvn2N9lBVj1e2-eB4';
 
+// ══════════════════════════════════════════════
+// ── 접속/이탈 추적 (ktc_sessions 테이블) ──
+// 완주자만 기록되던 ktc_logs와 별개로, 접속한 모든 사람의
+// 진행 단계를 실시간으로 기록해서 중도 이탈 지점을 분석합니다.
+// ══════════════════════════════════════════════
+
+// 단계 순서 (숫자가 클수록 뒤 단계). 관리자 페이지에서도 동일한 순서를 사용합니다.
+var CHECKPOINT_STEPS = {
+  '페이지 접속'              : 0,
+  '이름 입력 완료'            : 1,
+  '대회의실 입장'             : 2,
+  '집무실 입장'               : 3,
+  '스파이 미팅(보스씬) 진입'   : 4,
+  '눈 뜸(각성씬) 진입'        : 5,
+  'Phase2(의사결정) 진입'     : 6,
+  'Phase2 제출·컷씬 시작'     : 7,
+  '완료(결과 화면)'           : 8
+};
+
+function _newSessionId(){
+  if(window.crypto && typeof crypto.randomUUID === 'function') return crypto.randomUUID();
+  return 's_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+}
+
+// 세션 row 최초 생성 (페이지 로드 시 1회)
+function _initSession(){
+  G.sessionId = _newSessionId();
+  G.maxStep = -1;
+  var now = new Date().toISOString();
+  fetch(SUPABASE_URL + '/rest/v1/ktc_sessions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify({
+      session_id: G.sessionId,
+      player_name: null,
+      started_at: now,
+      last_checkpoint: '페이지 접속',
+      last_checkpoint_at: now,
+      status: 'in_progress',
+      collected_count: 0
+    })
+  }).catch(function(e){ console.warn('세션 로그 생성 실패:', e); });
+}
+
+// 세션 row 부분 업데이트 (fire-and-forget, 게임 진행을 막지 않음)
+function _patchSession(fields){
+  if(!G.sessionId) return;
+  fetch(SUPABASE_URL + '/rest/v1/ktc_sessions?session_id=eq.' + encodeURIComponent(G.sessionId), {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPABASE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_KEY,
+      'Prefer': 'return=minimal'
+    },
+    body: JSON.stringify(fields)
+  }).catch(function(e){ console.warn('세션 로그 업데이트 실패:', e); });
+}
+
+// 체크포인트 도달 기록 — 뒤로 갔다 다시 오는 경우 등으로 진행 단계가
+// 역행해서 기록되지 않도록, 가장 앞서 도달한 단계만 저장합니다.
+function logCheckpoint(name, extra){
+  var step = CHECKPOINT_STEPS[name];
+  if(step === undefined) step = 99;
+  if(step < G.maxStep) return;
+  G.maxStep = step;
+  var fields = Object.assign({
+    last_checkpoint: name,
+    last_checkpoint_at: new Date().toISOString()
+  }, extra || {});
+  _patchSession(fields);
+}
+
+// 페이지 로드 즉시 세션 생성 → "최초 접속" 카운트
+_initSession();
+
+// 탭을 닫거나 백그라운드로 전환할 때 마지막 활동 시각을 한 번 더 갱신
+// (체크포인트 사이에서 오래 머물다 이탈한 경우, 소요시간이 더 정확해집니다)
+window.addEventListener('pagehide', function(){
+  if(!G.sessionId || G.maxStep >= CHECKPOINT_STEPS['완료(결과 화면)']) return;
+  try{
+    fetch(SUPABASE_URL + '/rest/v1/ktc_sessions?session_id=eq.' + encodeURIComponent(G.sessionId), {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_KEY,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ last_checkpoint_at: new Date().toISOString() }),
+      keepalive: true
+    }).catch(function(){});
+  }catch(e){}
+});
+
 function show(id){
   document.querySelectorAll('.scr').forEach(function(s){s.classList.remove('on');});
   document.getElementById(id).classList.add('on');
@@ -95,6 +195,7 @@ function startGame(){
   G.name = nm;
   G.startTime = Date.now();
   G.collected = {}; G.choices = {};
+  logCheckpoint('이름 입력 완료', {player_name: nm});
   // 비서 이미지 프리로드
   ['images/cat_surp.jpg', 'images/cat_smile.jpg'].forEach(function(src){
     var img = new Image(); img.src = src;
@@ -190,6 +291,7 @@ function gotoR1(){
   show('s-r1');
   showHowToPlayBtn();
   updateDots();
+  logCheckpoint('대회의실 입장');
   // r1 이동 버튼 펄스 ON, r2 버튼 펄스 OFF
   setMovePulse('move-btn-r1', true);
   setMovePulse('move-btn-r2', false);
@@ -207,6 +309,7 @@ function gotoR2(){
   showHowToPlayBtn();
   updateDots();
   checkMeetBtn();
+  logCheckpoint('집무실 입장');
   // r2 이동 버튼 펄스 ON, r1 버튼 펄스 OFF
   setMovePulse('move-btn-r2', true);
   setMovePulse('move-btn-r1', false);
@@ -313,6 +416,7 @@ function collect(room){
     }
     updateDots();
     checkMeetBtn();
+    _patchSession({ collected_count: correctCount(), last_checkpoint_at: new Date().toISOString() });
   } else {
     var msgs = [
       '과연 이걸로\n일루셔니스트 게임즈가 무너질까?',
@@ -362,6 +466,7 @@ function gotoBoss(){
   stopBgm();
   playBgm('awake');
   show('s-boss');
+  logCheckpoint('스파이 미팅(보스씬) 진입');
   addBossStep();
 }
  
@@ -437,6 +542,7 @@ function startAwake(){
   G.awakeStep = 0;
   document.getElementById('awake-lines').innerHTML = '';
   show('s-awake');
+  logCheckpoint('눈 뜸(각성씬) 진입');
   addAwakeStep();
 }
  
@@ -526,6 +632,7 @@ function startP2(){
   G.choices = {};
   // 🔊 phase2 BGM은 각성씬 비서 이노 등장 시 이미 시작됨
   show('s-p2');
+  logCheckpoint('Phase2(의사결정) 진입');
   showHowToPlayBtnP2();
   buildP2Grid();
   document.getElementById('p2-badge').textContent = '0/'+G.p2Queue.length;
@@ -666,6 +773,7 @@ function doSubmit(){
   document.getElementById('ov-submit').style.display='none';
   hideHowToPlayBtnP2();
   revealP2Results();
+  logCheckpoint('Phase2 제출·컷씬 시작');
   // 🔊 phase2 BGM 정지 → 컷씬 시작
   stopBgm();
   // 800ms 후 컷씬 시작
@@ -729,6 +837,8 @@ function calcResult(){
  
 // ── 로그 저장 (Supabase 연동) ──
 function saveLog(score, grade){
+  // 세션 로그: 완료 처리 (이탈이 아닌 완주로 최종 확정)
+  logCheckpoint('완료(결과 화면)', { status: 'completed', collected_count: correctCount() });
   var logData = {
     name: G.name,
     start_time: new Date(G.startTime).toISOString(),
@@ -757,7 +867,9 @@ function restartAll(){
   // 🔊 모든 사운드 초기화 → title BGM 복귀
   stopBgm();
   playBgm('title');
-  G = {name:'',startTime:0,collected:{},choices:{},activePop:null,activeRoom:0,bossStep:0,awakeStep:0,p2Queue:[],p2Cursor:0};
+  G = {name:'',startTime:0,collected:{},choices:{},activePop:null,activeRoom:0,bossStep:0,awakeStep:0,p2Queue:[],p2Cursor:0,sessionId:null,maxStep:-1};
+  // 새로운 플레이 세션 시작 (이전 세션은 완료 상태로 그대로 남음)
+  _initSession();
   document.getElementById('inp-name').value='';
   document.getElementById('brief-go').style.display='none';
   // 브리핑 요소 초기화

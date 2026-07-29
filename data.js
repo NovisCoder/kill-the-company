@@ -61,7 +61,8 @@ var G = {
   choices:{},     // id -> {idx,score,ts}
   activePop:null, activeRoom:0,
   bossStep:0, awakeStep:0,
-  p2Queue:[], p2Cursor:0
+  p2Queue:[], p2Cursor:0,
+  sessionId:null, maxStep:-1   // 접속/이탈 추적용
 };
 
 // ── 화면 전환 ──
